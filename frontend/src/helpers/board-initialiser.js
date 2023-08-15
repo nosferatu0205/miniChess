@@ -6,32 +6,31 @@ import Queen from '../pieces/queen.js';
 import Rook from '../pieces/rook.js';
 
 export default function initialiseChessBoard() {
-  const squares = Array(64).fill(null);
+  const squares = Array(30).fill(null);
 
-  for (let i = 8; i < 16; i++) {
+  for (let i = 5; i < 10; i++) {
     squares[i] = new Pawn(2);
-    squares[i + 40] = new Pawn(1);
+    
   }
+  for (let i = 20; i < 25; i++) {
+    
+    squares[i] = new Pawn(1);
+  }
+ 
   squares[0] = new Rook(2);
-  squares[7] = new Rook(2);
-  squares[56] = new Rook(1);
-  squares[63] = new Rook(1);
+  squares[25] = new Rook(1);
 
   squares[1] = new Knight(2);
-  squares[6] = new Knight(2);
-  squares[57] = new Knight(1);
-  squares[62] = new Knight(1);
-
+  squares[26] = new Knight(1);
+  
   squares[2] = new Bishop(2);
-  squares[5] = new Bishop(2);
-  squares[58] = new Bishop(1);
-  squares[61] = new Bishop(1);
-
+  squares[27] = new Bishop(1);
+  
   squares[3] = new Queen(2);
   squares[4] = new King(2);
 
-  squares[59] = new Queen(1);
-  squares[60] = new King(1);
+  squares[28] = new Queen(1);
+  squares[29] = new King(1);
 
   return squares;
 }

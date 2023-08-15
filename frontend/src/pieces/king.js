@@ -7,13 +7,13 @@ export default class King extends Piece {
   }
 
   isMovePossible(src, dest) {
-    return ((src - 9 === dest && isSameDiagonal(src, dest)) ||
-      src - 8 === dest ||
-      (src - 7 === dest && isSameDiagonal(src, dest)) ||
+    return ((src - 6 === dest && isSameDiagonal(src, dest)) ||
+      src - 5 === dest ||
+      (src - 4 === dest && isSameDiagonal(src, dest)) ||
       (src + 1 === dest && isSameRow(src, dest)) ||
-      (src + 9 === dest && isSameDiagonal(src, dest)) ||
-      src + 8 === dest ||
-      (src + 7 === dest && isSameDiagonal(src, dest)) ||
+      (src + 6 === dest && isSameDiagonal(src, dest)) ||
+      src + 5 === dest ||
+      (src + 4 === dest && isSameDiagonal(src, dest)) ||
       (src - 1 === dest && isSameRow(src, dest)))
   }
 

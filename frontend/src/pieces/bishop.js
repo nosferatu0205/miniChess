@@ -26,13 +26,13 @@ export default class Bishop extends Piece {
       pathStart = src;
       pathEnd = dest;
     }
-    if (Math.abs(src - dest) % 9 === 0) {
-      incrementBy = 9;
-      pathStart += 9;
+    if (Math.abs(src - dest) % 6 === 0) {
+      incrementBy = 6;
+      pathStart += 6;
     }
     else {
-      incrementBy = 7;
-      pathStart += 7;
+      incrementBy = 4;
+      pathStart += 4;
     }
 
     for (let i = pathStart; i < pathEnd; i += incrementBy) {
