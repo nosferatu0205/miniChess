@@ -26,9 +26,9 @@ export default class Rook extends Piece {
       pathStart = src;
       pathEnd = dest;
     }
-    if (Math.abs(src - dest) % 8 === 0) {
-      incrementBy = 8;
-      pathStart += 8;
+    if (Math.abs(src - dest) % 5 === 0) {
+      incrementBy = 5;
+      pathStart += 5;
     }
     else {
       incrementBy = 1;
