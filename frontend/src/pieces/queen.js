@@ -28,16 +28,16 @@ export default class Queen extends Piece {
       pathEnd = dest;
     }
     if (Math.abs(src - dest) % 5 === 0) {
-      incrementBy = 8;
-      pathStart += 8;
+      incrementBy = 5;
+      pathStart += 5;
     }
     else if (Math.abs(src - dest) % 6 === 0) {
-      incrementBy = 9;
-      pathStart += 9;
+      incrementBy = 6;
+      pathStart += 6;
     }
     else if (Math.abs(src - dest) % 4 === 0) {
-      incrementBy = 7;
-      pathStart += 7;
+      incrementBy = 4;
+      pathStart += 4;
     }
     else {
       incrementBy = 1;

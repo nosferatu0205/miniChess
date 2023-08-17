@@ -114,7 +114,7 @@ export default class Game extends React.Component {
   isCheckForPlayer(squares, player) {
     const opponent = player === 1 ? 2 : 1
     const playersKingPosition = this.getKingPosition(squares, player)
-    const canPieceKillPlayersKing = (piece, i) => piece.isMovePossible(playersKingPosition, i, squares)
+    const canPieceKillPlayersKing = (piece, i) => piece.isMovePossible(playersKingPosition, i, squares,1);
     return squares.reduce((acc, curr, idx) =>
       acc ||
       (curr &&
