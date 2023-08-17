@@ -1,5 +1,5 @@
 import Piece from './piece.js';
-import { isSameRow, isSameColumn, isSameDiagonal, isPathClean } from '../helpers'
+import { isSameRow, isSameColumn,  isPathClean } from '../helpers'
 
 export default class Rook extends Piece {
   constructor(player) {
@@ -8,7 +8,10 @@ export default class Rook extends Piece {
 
   isMovePossible(src, dest, squares, isDestEnemyOccupied) {
     const srcToDestPath = this.getSrcToDestPath(src, dest);
-    return isPathClean(srcToDestPath, squares, isDestEnemyOccupied) && (isSameColumn(src, dest) || isSameRow(src, dest));
+    if (srcToDestPath.length === 0) {
+      return isSameColumn(src, dest) || isSameRow(src, dest);
+    }
+    return isPathClean(srcToDestPath, squares) && (isSameColumn(src, dest) || isSameRow(src, dest));
   }
 
   /**
@@ -31,9 +34,9 @@ export default class Rook extends Piece {
       pathEnd = dest;
     }
     const boardSize = 5; // Change this to match your mini chess board's size
-    if (Math.abs(src - dest) % boardSize === 0) {
-      incrementBy = boardSize;
-      pathStart += boardSize;
+    if (Math.abs(src - dest) % 5 === 0) {
+      incrementBy = 5;
+      pathStart += 5;
     } else {
       incrementBy = 1;
       pathStart += 1;

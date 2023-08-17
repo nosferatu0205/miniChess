@@ -8,7 +8,7 @@ export default class Queen extends Piece {
 
   isMovePossible(src, dest, squares, isDestEnemyOccupied) {
     const srcToDestPath = this.getSrcToDestPath(src, dest);
-    return isPathClean(srcToDestPath, squares, isDestEnemyOccupied) && (isSameColumn(src, dest) || isSameRow(src, dest) || isSameDiagonal(src, dest));
+    return isPathClean(srcToDestPath, squares) && (isSameColumn(src, dest) || isSameRow(src, dest) || isSameDiagonal(src, dest));
   }
 
   /**
