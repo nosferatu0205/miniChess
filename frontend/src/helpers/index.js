@@ -16,8 +16,19 @@ const isSameDiagonal = (src, dest) => {
     (diagonalDictionaryTRBL[src] && diagonalDictionaryTRBL[src][dest]))
 }
 
-const isPathClean = (srcToDestPath, squares) => srcToDestPath.reduce((acc, curr) => !squares[curr] && acc, true)
+const isPathClean = (srcToDestPath, squares, isDestEnemyOccupied) => {
+  for (let i = 0; i < srcToDestPath.length; i++) {
+    console.log(squares[srcToDestPath[i]]);
+    if (squares[srcToDestPath[i]]) {
+      return false;
+    }
+  }
+  if (isDestEnemyOccupied) {
+    return false;
+  }
 
+  return true;
+};
 
 module.exports = {
   isSameRow,

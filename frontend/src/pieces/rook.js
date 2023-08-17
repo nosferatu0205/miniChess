@@ -6,8 +6,9 @@ export default class Rook extends Piece {
     super(player, (player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg"));
   }
 
-  isMovePossible(src, dest, squares) {
-    return isPathClean(this.getSrcToDestPath(src, dest), squares) && (isSameColumn(src, dest) || isSameRow(src, dest));
+  isMovePossible(src, dest, squares, isDestEnemyOccupied) {
+    const srcToDestPath = this.getSrcToDestPath(src, dest);
+    return isPathClean(srcToDestPath, squares, isDestEnemyOccupied) && (isSameColumn(src, dest) || isSameRow(src, dest));
   }
 
   /**
@@ -17,27 +18,36 @@ export default class Rook extends Piece {
    * @return {[array]}      
    */
   getSrcToDestPath(src, dest) {
-    let path = [], pathStart, pathEnd, incrementBy;
+    console.log(src, dest);
+    let path = [],
+      pathStart,
+      pathEnd,
+      incrementBy;
     if (src > dest) {
       pathStart = dest;
       pathEnd = src;
-    }
-    else {
+    } else {
       pathStart = src;
       pathEnd = dest;
     }
-    if (Math.abs(src - dest) % 5 === 0) {
-      incrementBy = 5;
-      pathStart += 5;
-    }
-    else {
+    const boardSize = 5; // Change this to match your mini chess board's size
+    if (Math.abs(src - dest) % boardSize === 0) {
+      incrementBy = boardSize;
+      pathStart += boardSize;
+    } else {
       incrementBy = 1;
       pathStart += 1;
     }
 
+
     for (let i = pathStart; i < pathEnd; i += incrementBy) {
       path.push(i);
     }
+
+
     return path;
   }
+
+
+
 }

@@ -6,8 +6,15 @@ export default class Bishop extends Piece {
     super(player, (player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg" : "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg"));
   }
 
-  isMovePossible(src, dest, squares) {
-    return isPathClean(this.getSrcToDestPath(src, dest), squares) && isSameDiagonal(src, dest)
+  isMovePossible(src, dest, squares, isDestEnemyOccupied) {
+    console.log(src, dest);
+    const srcToDestPath = this.getSrcToDestPath(src, dest);
+
+    if (srcToDestPath.length === 0) {
+      return isSameDiagonal(src, dest);
+    }
+
+    return isPathClean(srcToDestPath, squares) && isSameDiagonal(src, dest);
   }
 
   /**
