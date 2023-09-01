@@ -7,7 +7,7 @@ export default class Bishop extends Piece {
   }
 
   isMovePossible(src, dest, squares, isDestEnemyOccupied) {
-    console.log(src, dest);
+    
     const srcToDestPath = this.getSrcToDestPath(src, dest);
 
     if (srcToDestPath.length === 0) {

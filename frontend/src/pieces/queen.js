@@ -1,5 +1,10 @@
 import Piece from './piece.js';
-import { isSameRow, isSameColumn, isSameDiagonal, isPathClean } from '../helpers'
+import { isSameRow, isSameColumn, isSameDiagonal, isPathClean } from '../helpers';
+const diagonalDictionaryTLBR = require('../dictionaries/diagonalTopLeftBottomRight.json');
+const diagonalDictionaryTRBL = require('../dictionaries/diagonalTopRightBottomLeft.json');
+const rowDictionary = require('../dictionaries/row.json');
+const columnDictionary = require('../dictionaries/column.json');
+
 
 export default class Queen extends Piece {
   constructor(player) {
@@ -22,31 +27,71 @@ export default class Queen extends Piece {
     if (src > dest) {
       pathStart = dest;
       pathEnd = src;
+      
     }
     else {
       pathStart = src;
       pathEnd = dest;
     }
-    if (Math.abs(src - dest) % 5 === 0) {
+    
+    
+    console.log("checking queen pathstart and end ",pathStart, pathEnd);
+
+    if ((diagonalDictionaryTLBR[src] && diagonalDictionaryTLBR[src][dest])){
+      let temp = src
+      if (src< dest){
+        while (temp <= dest) {
+          if (diagonalDictionaryTLBR[src][temp] && temp!==src && temp!==dest) {
+            path.push(temp)
+          }
+          temp += 1
+        }
+        return path
+      } else {
+        while (temp >= dest) {
+          if (diagonalDictionaryTLBR[src][temp] && temp!==src && temp!==dest) {
+            path.push(temp)
+          }
+          temp -= 1
+        }
+        return path
+      }
+    }
+
+    else if ((diagonalDictionaryTRBL[src] && diagonalDictionaryTRBL[src][dest])){
+      let temp = src
+      if (src < dest){
+        while (temp <= dest) {
+          if (diagonalDictionaryTRBL[src][temp] && temp!==src && temp!==dest) {
+            path.push(temp)
+          }
+          temp += 1
+        }
+        return path
+      } else {
+        while (temp >= dest) {
+          if (diagonalDictionaryTRBL[src][temp] && temp!==src && temp!==dest) {
+            path.push(temp)
+          }
+          temp -= 1
+        }
+        return path
+      }
+    }
+    else if (Math.abs(src - dest) % 5 === 0) {
       incrementBy = 5;
       pathStart += 5;
     }
-    else if (Math.abs(src - dest) % 6 === 0) {
-      incrementBy = 6;
-      pathStart += 6;
-    }
-    else if (Math.abs(src - dest) % 4 === 0) {
-      incrementBy = 4;
-      pathStart += 4;
-    }
-    else {
+
+    else if(Math.abs(src - dest)<5) {
       incrementBy = 1;
       pathStart += 1;
     }
-
+  
     for (let i = pathStart; i < pathEnd; i += incrementBy) {
       path.push(i);
-    }
+    }console.log("path calculation queen", path);
     return path;
+    
   }
 }

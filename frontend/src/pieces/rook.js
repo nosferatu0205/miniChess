@@ -21,7 +21,7 @@ export default class Rook extends Piece {
    * @return {[array]}      
    */
   getSrcToDestPath(src, dest) {
-    console.log(src, dest);
+    
     let path = [],
       pathStart,
       pathEnd,

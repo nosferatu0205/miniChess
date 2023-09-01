@@ -17,8 +17,9 @@ const isSameDiagonal = (src, dest) => {
 }
 
 const isPathClean = (srcToDestPath, squares, isDestEnemyOccupied) => {
+  
   for (let i = 0; i < srcToDestPath.length; i++) {
-    console.log(squares[srcToDestPath[i]]);
+    
     if (squares[srcToDestPath[i]]) {
       return false;
     }
