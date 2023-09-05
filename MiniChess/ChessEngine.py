@@ -27,18 +27,21 @@ class GameState():
     def getAllPossibleMoves(self):
         moves = []
         for r in range(6):
-            print(30)
+            # print(30)
             for c in range(5):
-                print(32)
+                # print(32)
                 turn = self.board[r][c][0]
-                print(turn)
+                # print(turn)
                 if (turn == "w" and self.whiteToMove) or (turn == "b" and not self.whiteToMove):
                     piece = self.board[r][c][1]
                     if piece == "p":
                         # print("Line 35 o kaj kore na")
                         self.getPawnMoves(r,c,moves)
-
-        print(moves)
+                        print("PAWN")
+                    elif piece == "R":
+                        self.getRookMoves(r,c,moves)
+                        print("ROOK")
+        # print(moves)
         return moves
 
     def getPawnMoves(self, r, c, moves):
@@ -56,6 +59,28 @@ class GameState():
                     new_r, new_c = r + dr, c + dc
                     if 0 <= new_r < 6 and 0 <= new_c < 5 and self.board[new_r][new_c][0] == enemy_color:
                         moves.append(Move((r, c), (new_r, new_c), self.board))
+
+    def getRookMoves(self, r, c, moves):
+
+        directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # up, left, down, right
+        enemy_color = 'b' if self.whiteToMove else 'w'
+
+        for dr, dc in directions:
+            for i in range(1, 6):
+                destRow, destCol = r + dr * i, c + dc * i
+
+                if not (0 <= destRow < 6 and 0 <= destCol < 5):
+                    break
+
+                destination = self.board[destRow][destCol]
+
+                if destination == '--':
+                    moves.append(Move((r, c), (destRow, destCol), self.board))
+                elif destination[0] == enemy_color:
+                    moves.append(Move((r, c), (destRow, destCol), self.board))
+                    break
+                else:
+                    break
 
 
 class Move():
