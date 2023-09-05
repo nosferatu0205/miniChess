@@ -23,6 +23,9 @@ def main():
     screen.fill(p.Color('white'))
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
+    for i in range(len(validMoves)):
+        print(validMoves[i].getChessNotation())
+
     moveMade = False
     load_images()
     # print(gs.board)
@@ -31,7 +34,9 @@ def main():
     playerClicks = []
 
     while running:
+
         for e in p.event.get():
+
             if e.type == p.QUIT:
                 running = False
             elif e.type == p.MOUSEBUTTONDOWN:
@@ -51,11 +56,16 @@ def main():
                     if move in validMoves:
                         gs.makeMove(move)
                         moveMade = True
+                    else:
+                        playerClicks.clear()
                     sqSelected = ()
                     playerClicks = []
 
         if moveMade:
             validMoves = gs.getValidMoves()
+            for move in validMoves:
+                print(move.getChessNotation())
+            print("----")
             moveMade = False
         # print("working")
         draw_game_state(screen, gs)
@@ -70,7 +80,7 @@ def draw_game_state(screen, gs):
 
 
 def draw_board(screen):
-    colors = [p.Color('white'), p.Color('olive')]
+    colors = [p.Color('white'), p.Color('silver')]
     for r in range(DIMENSION_VERTICAL):
         for c in range(DIMENSION_HORIZONTAL):
             color = colors[(r + c) % 2]
