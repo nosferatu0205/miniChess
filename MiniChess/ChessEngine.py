@@ -69,9 +69,9 @@ class GameState():
             self.board[move.endRow][move.endCol] = move.pieceCaptured
             self.whiteToMove = not self.whiteToMove
             # update king if move
-            if move.pieceMoved == 'b_K':
+            if move.pieceMoved == 'bK':
                 self.blackKingLocation = (move.startRow, move.startCol)
-            elif move.pieceMoved == 'w_K':
+            elif move.pieceMoved == 'wK':
                 self.whiteKingLocation = (move.startRow, move.startCol)
     def inCheck(self):
         if self.whiteToMove:
@@ -101,48 +101,61 @@ class GameState():
         return moves
 
     def getPawnMoves(self, r, c, moves):
-        direction = -1 if self.whiteToMove else 1  # Adjust direction based on color
-        enemy_color = 'b' if self.whiteToMove else 'w'
+        if self.whiteToMove:  # white pawn moves
+            if r > 0:  # row index checking
+                if self.board[r-1][c] == "--":  # 1 square pawn advance
+                    moves.append(Move((r, c), (r-1, c), self.board))
+                if c-1 > -1:
+                    # left corner enemy piece to capture
+                    if self.board[r-1][c-1][0] == 'b':
+                        moves.append(Move((r, c), (r-1, c-1), self.board))
+                if c+1 < 5:
+                    # right corner enemy piece to capture
+                    if self.board[r-1][c+1][0] == 'b':
+                        moves.append(Move((r, c), (r-1, c+1), self.board))
 
-        if 0 <= r + direction < 6:
-            # Single square pawn advance
-            if self.board[r + direction][c] == "--":
-                moves.append(Move((r, c), (r + direction, c), self.board))
-
-            # Pawn captures
-            for dc in [-1, 1]:
-                new_r, new_c = r + direction, c + dc
-                if 0 <= new_r < 6 and 0 <= new_c < 5 and self.board[new_r][new_c][0] == enemy_color:
-                    moves.append(Move((r, c), (new_r, new_c), self.board))
+        else:  # black pawn moves
+            if r < 5:  # row index checking
+                if self.board[r+1][c] == "--":  # 1 square pawn advance
+                    moves.append(Move((r, c), (r+1, c), self.board))
+                if c-1 > -1:
+                    # right corner enemy piece to capture
+                    if self.board[r+1][c-1][0] == 'w':
+                        moves.append(Move((r, c), (r+1, c-1), self.board))
+                if c+1 < 5:
+                    # left corner enemy piece to capture
+                    if self.board[r+1][c+1][0] == 'w':
+                        moves.append(Move((r, c), (r+1, c+1), self.board))
 
     def getRookMoves(self, r, c, moves):
 
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]  # up, left, down, right
         enemy_color = 'b' if self.whiteToMove else 'w'
 
-        for dr, dc in directions:
+        for dr,dc in directions:
             for i in range(1, 6):
                 destRow, destCol = r + dr * i, c + dc * i
 
-                if not (0 <= destRow < 6 and 0 <= destCol < 5):
-                    break
-
-                destination = self.board[destRow][destCol]
-
-                if destination == '--':
-                    moves.append(Move((r, c), (destRow, destCol), self.board))
-                elif destination[0] == enemy_color:
-                    moves.append(Move((r, c), (destRow, destCol), self.board))
-                    break
-                else:
+                if 0 <= destRow < 6 and 0 <= destCol < 5:   # check on board
+                    destination = self.board[destRow][destCol]
+                    if destination == '--':  # empty space so valid
+                        moves.append(
+                            Move((r, c), (destRow, destCol), self.board))
+                    elif destination[0] == enemy_color:
+                        moves.append(
+                            Move((r, c), (destRow, destCol), self.board))
+                        break
+                    else:  # friendly piece (own piece)
+                        break
+                else:  # off board
                     break
 
     def getKnightMoves(self, r, c, moves):
         knightMoves = ((-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1))
         allyColor = 'w' if self.whiteToMove else 'b'
 
-        for m in knightMoves:
-            destRow, destCol = r + m[0], c + m[1]
+        for d in knightMoves:
+            destRow, destCol = r + d[0], c + d[1]
             if 0 <= destRow < 6 and 0 <= destCol < 5:  # check if the destination is on the board
                 endPiece = self.board[destRow][destCol]
                 if endPiece[0] != allyColor:
