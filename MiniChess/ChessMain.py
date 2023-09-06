@@ -6,7 +6,7 @@ WIDTH = 320
 DIMENSION_VERTICAL = 6
 DIMENSION_HORIZONTAL = 5
 SQ_SIZE = 64
-MAX_FPS = 15
+MAX_FPS = 60
 IMAGES = {}
 
 
@@ -21,6 +21,7 @@ def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
     screen.fill(p.Color('white'))
+
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
     for i in range(len(validMoves)):
@@ -74,13 +75,36 @@ def main():
         p.display.flip()
 
 
+def highlightSquare(screen, gs, validMoves, sqSelected):
+    if len(sqSelected) != 0:
+        row, col = sqSelected[0]
+        print(sqSelected[0])
+        # a piece that can be moved
+        if GAME_STATE.board[row][col][0] == ('w' if GAME_STATE.whiteToMove else 'b'):
+
+            # hightlight square
+            surface = pygame.Surface((SQ_SIZE, SQ_SIZE))
+            # transparency value (0 - transparent, 255 - solid)
+            surface.set_alpha(100)
+            surface.fill(pygame.Color('blue'))
+            WINDOW.blit(surface, (col*SQ_SIZE, row*SQ_SIZE))
+
+            # highlight moves
+            # TODO: if it's checkmate then the king should be colored as red
+            surface.fill(pygame.Color('yellow'))
+
+            for move in validMoves:
+                if move.startRow == row and move.startCol == col:
+                    WINDOW.blit(
+                        surface, (SQ_SIZE*move.endCol, SQ_SIZE*move.endRow))
+
 def draw_game_state(screen, gs):
     draw_board(screen)
     draw_pieces(screen, gs.board)
 
 
 def draw_board(screen):
-    colors = [p.Color('white'), p.Color('silver')]
+    colors = [p.Color('white'), p.Color('darkolivegreen3')]
     for r in range(DIMENSION_VERTICAL):
         for c in range(DIMENSION_HORIZONTAL):
             color = colors[(r + c) % 2]
