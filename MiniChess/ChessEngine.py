@@ -45,20 +45,19 @@ class GameState():
         return moves
 
     def getPawnMoves(self, r, c, moves):
-        directions = [-1, 1] if self.whiteToMove else [1, -1]
+        direction = -1 if self.whiteToMove else 1  # Adjust direction based on color
         enemy_color = 'b' if self.whiteToMove else 'w'
 
-        for dr in directions:
-            if 0 <= r + dr < 6:
-                # Single square pawn advance
-                if self.board[r + dr][c] == "--":
-                    moves.append(Move((r, c), (r + dr, c), self.board))
+        if 0 <= r + direction < 6:
+            # Single square pawn advance
+            if self.board[r + direction][c] == "--":
+                moves.append(Move((r, c), (r + direction, c), self.board))
 
-                # Pawn captures
-                for dc in [-1, 1]:
-                    new_r, new_c = r + dr, c + dc
-                    if 0 <= new_r < 6 and 0 <= new_c < 5 and self.board[new_r][new_c][0] == enemy_color:
-                        moves.append(Move((r, c), (new_r, new_c), self.board))
+            # Pawn captures
+            for dc in [-1, 1]:
+                new_r, new_c = r + direction, c + dc
+                if 0 <= new_r < 6 and 0 <= new_c < 5 and self.board[new_r][new_c][0] == enemy_color:
+                    moves.append(Move((r, c), (new_r, new_c), self.board))
 
     def getRookMoves(self, r, c, moves):
 
