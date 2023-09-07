@@ -1,8 +1,9 @@
 import pygame as p
 from MiniChess import ChessEngine
 import sys
+import ai2
 
-HEIGHT = 450
+HEIGHT = 520
 WIDTH = 320
 DIMENSION_VERTICAL = 6
 DIMENSION_HORIZONTAL = 5
@@ -17,12 +18,15 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color('white'))
 
+    # human is true
+    playerOne = True
+    #we can put a button jeitay choose kora jayhuman vs human na human vs ai
+    playerTwo = False
+
     gs = ChessEngine.GameState()
     validMoves = gs.getValidMoves()
-    for i in range(len(validMoves)):
-        print(validMoves[i].getChessNotation())
 
-    restart_button_rect = p.Rect(110, 400, 100, 40)
+    restart_button_rect = p.Rect(200, 410, 100, 40)
     moveMade = False
     load_images()
     # print(gs.board)
@@ -31,7 +35,7 @@ def main():
     playerClicks = []
 
     while running:
-
+        humanPlayer = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
         for e in p.event.get():
 
             if e.type == p.QUIT:
@@ -39,40 +43,49 @@ def main():
                 p.quit()
                 sys.exit()
             elif e.type == p.MOUSEBUTTONDOWN:
-                location = p.mouse.get_pos()
-                col = location[0] // SQ_SIZE
-                row = location[1] // SQ_SIZE
-                if sqSelected == (row, col):
-                    sqSelected = ()
-                    playerClicks = []
-                else:
-                    sqSelected = (row, col)
-                    playerClicks.append(sqSelected)
-
-                if len(playerClicks) == 2:
-                    move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
-                    print(move.getChessNotation())
-                    if move in validMoves:
-                        gs.makeMove(move)
-                        moveMade = True
+                if humanPlayer:
+                    location = p.mouse.get_pos()
+                    col = location[0] // SQ_SIZE
+                    row = location[1] // SQ_SIZE
+                    if sqSelected == (row, col):
+                        sqSelected = ()
+                        playerClicks = []
                     else:
-                        playerClicks.clear()
+                        sqSelected = (row, col)
+                        playerClicks.append(sqSelected)
+
+                    if len(playerClicks) == 2:
+                        move = ChessEngine.Move(playerClicks[0], playerClicks[1], gs.board)
+                       # print(move.getChessNotation())
+                        if move in validMoves:
+                            gs.makeMove(move)
+                            moveMade = True
+                        else:
+                            playerClicks.clear()
+                        sqSelected = ()
+                        playerClicks = []
+                if e.type == p.MOUSEBUTTONDOWN and restart_button_rect.collidepoint(e.pos):
+                    gs = ChessEngine.GameState()
+                    validMoves = gs.getValidMoves()
                     sqSelected = ()
                     playerClicks = []
-            if e.type == p.MOUSEBUTTONDOWN and restart_button_rect.collidepoint(e.pos):
-                gs = ChessEngine.GameState()
-                validMoves = gs.getValidMoves()
-                sqSelected = ()
-                playerClicks = []
-                running= True
-                moveMade = False
+                    running= True
+                    moveMade = False
+
+        # print("working")
+        if not humanPlayer:
+            aiMove = ai2.findBestMove(gs, validMoves) 
+            gs.makeMove(aiMove)
+            moveMade = True
+
         if moveMade:
             validMoves = gs.getValidMoves()
-            for move in validMoves:
-                print(move.getChessNotation())
-            print("----")
+          #  for move in validMoves:
+               # print(move.getChessNotation())
+
+          #  print("----")
             moveMade = False
-        # print("working")
+
         draw_game_state(screen, gs, validMoves, sqSelected)
         # print("working2")
         clock.tick(MAX_FPS)
@@ -102,6 +115,18 @@ def draw_board(screen):
             p.draw.rect(screen, color, p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 
+            #chess notation
+            rank = 6 - r
+            if c == 0:
+                surface = p.font.SysFont('Arial', 15).render(str(rank), True, 'black')
+                screen.blit(surface, (5, r * SQ_SIZE))
+
+            if r == DIMENSION_VERTICAL - 1:
+
+                surface = p.font.SysFont('Arial', 15).render(chr(ord('a') + c), True, 'black')
+                screen.blit(surface, (c * SQ_SIZE + 5,  (DIMENSION_VERTICAL) * SQ_SIZE))
+
+
 def draw_pieces(screen, board):
     for r in range(DIMENSION_VERTICAL):
         for c in range(DIMENSION_HORIZONTAL):
@@ -113,7 +138,7 @@ def draw_pieces(screen, board):
 def draw_buttons(screen):
 
     # Draw "Restart" button
-    restart_button_rect = p.Rect(110, 400, 100, 40)  # position, width, height
+    restart_button_rect = p.Rect(200, 410, 100, 40)  # position, width, height
     p.draw.rect(screen, "darkgreen", restart_button_rect)
 
     restart_text = p.font.SysFont('Arial', 20, bold=True).render("Restart", True, "white")  # font, color, text
@@ -123,12 +148,12 @@ def draw_buttons(screen):
 
 def draw_turn_indicator(screen, gs):
     # Draw a rectangle to indicate the current player's turn
-    turn_rect = p.Rect(10, HEIGHT - 40, 100, 40)
+    turn_rect = p.Rect(10, 410, 100, 40)
     turn_color = "white"
     p.draw.rect(screen, turn_color, turn_rect)
 
     # Draw a border around the turn indicator box
-    border_rect = p.Rect(10, HEIGHT - 40, 100, 40)
+    border_rect = p.Rect(10, 410, 100, 40)
     border_color = "gray"  # Choose a color for the border
     p.draw.rect(screen, border_color, border_rect, 3)  # The last argument (3) is the border width
 

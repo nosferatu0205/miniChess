@@ -32,6 +32,16 @@ class GameState():
         elif move.pieceMoved == 'wK':
             self.whiteKingLocation = (move.endRow, move.endCol)
 
+        # pawn promotion
+
+
+
+
+
+
+            #self.board[move.endRow][move.endCol] = move.pieceMoved[0] + "Q"
+
+
 
     def getValidMoves(self):
         # list moves
@@ -101,31 +111,38 @@ class GameState():
         return moves
 
     def getPawnMoves(self, r, c, moves):
-        if self.whiteToMove:  # white pawn moves
-            if r > 0:  # row index checking
+        if self.whiteToMove:  # White pawn moves
+            if r > 0:  # Row index checking
                 if self.board[r-1][c] == "--":  # 1 square pawn advance
                     moves.append(Move((r, c), (r-1, c), self.board))
+                    # Check if the pawn is in its starting position (row 4)
+                    if r == 4 and self.board[r-2][c] == "--":
+                        moves.append(Move((r, c), (r-2, c), self.board))
                 if c-1 > -1:
-                    # left corner enemy piece to capture
+                    # Left corner enemy piece to capture
                     if self.board[r-1][c-1][0] == 'b':
                         moves.append(Move((r, c), (r-1, c-1), self.board))
                 if c+1 < 5:
-                    # right corner enemy piece to capture
+                    # Right corner enemy piece to capture
                     if self.board[r-1][c+1][0] == 'b':
                         moves.append(Move((r, c), (r-1, c+1), self.board))
 
-        else:  # black pawn moves
-            if r < 5:  # row index checking
+        else:  # Black pawn moves
+            if r < 5:  # Row index checking
                 if self.board[r+1][c] == "--":  # 1 square pawn advance
                     moves.append(Move((r, c), (r+1, c), self.board))
+                    # Check if the pawn is in its starting position (row 1)
+                    if r == 1 and self.board[r+2][c] == "--":
+                        moves.append(Move((r, c), (r+2, c), self.board))
                 if c-1 > -1:
-                    # right corner enemy piece to capture
+                    # Right corner enemy piece to capture
                     if self.board[r+1][c-1][0] == 'w':
                         moves.append(Move((r, c), (r+1, c-1), self.board))
                 if c+1 < 5:
-                    # left corner enemy piece to capture
+                    # Left corner enemy piece to capture
                     if self.board[r+1][c+1][0] == 'w':
                         moves.append(Move((r, c), (r+1, c+1), self.board))
+
 
     def getRookMoves(self, r, c, moves):
 
@@ -215,6 +232,9 @@ class Move():
         self.pieceMoved = board[self.startRow][self.startCol]
         self.pieceCaptured = board[self.endRow][self.endCol]
         self.moveId = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
+        # pawn promotion
+
+        self.is_pawn_promotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 7)
 
         #overriding equals
     def __eq__(self, other):
