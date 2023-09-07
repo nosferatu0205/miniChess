@@ -33,13 +33,10 @@ class GameState():
             self.whiteKingLocation = (move.endRow, move.endCol)
 
         # pawn promotion
+       # if move.is_pawn_promotion:
+            # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + "Q"
+        
 
-
-
-
-
-
-            #self.board[move.endRow][move.endCol] = move.pieceMoved[0] + "Q"
 
 
 
@@ -234,7 +231,7 @@ class Move():
         self.moveId = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         # pawn promotion
 
-        self.is_pawn_promotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 7)
+        self.is_pawn_promotion = (self.pieceMoved == "wp" and self.endRow == 0) or (self.pieceMoved == "bp" and self.endRow == 5)
 
         #overriding equals
     def __eq__(self, other):

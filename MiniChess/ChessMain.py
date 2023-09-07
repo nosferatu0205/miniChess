@@ -1,7 +1,7 @@
 import pygame as p
 from MiniChess import ChessEngine
 import sys
-import ai2
+import ai
 
 HEIGHT = 520
 WIDTH = 320
@@ -74,7 +74,7 @@ def main():
 
         # print("working")
         if not humanPlayer:
-            aiMove = ai2.findBestMove(gs, validMoves) 
+            aiMove = ai.findBestMove(gs, validMoves) 
             gs.makeMove(aiMove)
             moveMade = True
 
