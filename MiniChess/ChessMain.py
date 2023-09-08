@@ -74,7 +74,7 @@ def main():
 
         # print("working")
         if not humanPlayer:
-            aiMove = ai.findBestMove(gs, validMoves) 
+            aiMove = ai.findBestMove(gs, validMoves)
             gs.makeMove(aiMove)
             moveMade = True
 

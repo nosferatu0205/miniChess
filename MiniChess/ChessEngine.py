@@ -33,10 +33,8 @@ class GameState():
             self.whiteKingLocation = (move.endRow, move.endCol)
 
         # pawn promotion
-       # if move.is_pawn_promotion:
-            # self.board[move.endRow][move.endCol] = move.pieceMoved[0] + "Q"
-        
-
+        if move.is_pawn_promotion:
+            self.board[move.endRow][move.endCol] = move.pieceMoved[0] + "Q"
 
 
 
