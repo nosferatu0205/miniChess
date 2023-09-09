@@ -229,7 +229,12 @@ class Move():
 
         self.is_pawn_promotion = (self.pieceMoved == "wp" and self.endRow == 0) or (
                 self.pieceMoved == "bp" and self.endRow == 5)
-
+    def is_capture(self):
+        """
+        Determine whether this move is a capture.
+        A capture occurs when a piece is moved to a square occupied by an opponent's piece.
+        """
+        return self.pieceCaptured is not None
         # overriding equals
 
     def __eq__(self, other):

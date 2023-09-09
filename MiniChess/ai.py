@@ -1,10 +1,10 @@
 import random
 
-piece_score = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
+piece_score = {"K":100,  "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 10000
 STALEMATE = 0
 DEPTH = 3
-'''
+
 knight_scores = [[0.0, 0.1, 0.2, 0.2, 0.2],
                  [0.1, 0.3, 0.5, 0.5, 0.5],
                  [0.2, 0.5, 0.6, 0.65, 0.65],
@@ -77,7 +77,7 @@ pawn_scores = [[0.8, 0.8, 0.8, 0.8, 0.8],
                [0.2, 0.2, 0.0, 0.0, 0.2],
                [0.2, 0.2, 0.2, 0.2, 0.2]]
 
-
+'''
 
 piece_position_scores = {"wN": knight_scores,
                          "bN": knight_scores[::-1],
@@ -103,8 +103,18 @@ def findMoveMiniMaxPruning(gs, validMoves, depth, alpha, beta, turnMultiplier):
     if depth == 0 or gs.checkMate or gs.staleMate:
         return turnMultiplier * scoreBoard(gs)
 
+    # Capture Moves First, MVV-LVA Ordering
+    capture_moves = [move for move in validMoves if move.is_capture()]
+    non_capture_moves = [move for move in validMoves if not move.is_capture()]
+
+    # Order capture_moves based on MVV-LVA heuristic
+    capture_moves.sort(key=lambda move: capture_heuristic(gs, move))
+
+    # Combine the ordered lists
+    ordered_moves = capture_moves + non_capture_moves
+
     maxScore = -CHECKMATE
-    for move in validMoves:
+    for move in ordered_moves:
         gs.makeMove(move)
         nextMoves = gs.getValidMoves()
         score = -findMoveMiniMaxPruning(gs, nextMoves, depth-1, -beta, -alpha, -turnMultiplier)
@@ -127,7 +137,22 @@ def findMoveMiniMaxPruning(gs, validMoves, depth, alpha, beta, turnMultiplier):
 
     return maxScore
 
+def capture_heuristic(gs, move):
+    victim_piece = gs.board[move.endRow][move.endCol]
+    attacker_piece = gs.board[move.startRow][move.startCol]
 
+    # Check if the piece is not an empty square
+    if victim_piece != '--':
+        victim_value = piece_score[victim_piece[1]]
+    else:
+        victim_value = 0  # Set value to 0 for empty squares
+
+    attacker_value = piece_score[attacker_piece[1]]
+
+    if gs.whiteToMove:
+        return victim_value - attacker_value
+    else:
+        return attacker_value - victim_value
 def scoreBoard(gs):
     if gs.checkMate:
         if gs.whiteToMove:
