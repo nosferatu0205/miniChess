@@ -1,6 +1,6 @@
 import random
 
-piece_score = {"K":100,  "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
+piece_score = {"K": 100, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 CHECKMATE = 10000
 STALEMATE = 0
 DEPTH = 3
@@ -90,6 +90,7 @@ piece_position_scores = {"wN": knight_scores,
                          "wp": pawn_scores,
                          "bp": pawn_scores[::-1]}
 
+
 def findBestMove(gs, validMoves):
     global nextMove
     nextMove = None
@@ -117,7 +118,7 @@ def findMoveMiniMaxPruning(gs, validMoves, depth, alpha, beta, turnMultiplier):
     for move in ordered_moves:
         gs.makeMove(move)
         nextMoves = gs.getValidMoves()
-        score = -findMoveMiniMaxPruning(gs, nextMoves, depth-1, -beta, -alpha, -turnMultiplier)
+        score = -findMoveMiniMaxPruning(gs, nextMoves, depth - 1, -beta, -alpha, -turnMultiplier)
 
         # Include current score calculation
         current_score = turnMultiplier * scoreBoard(gs)
@@ -137,9 +138,10 @@ def findMoveMiniMaxPruning(gs, validMoves, depth, alpha, beta, turnMultiplier):
 
     return maxScore
 
+
 def capture_heuristic(gs, move):
-    victim_piece = gs.board[move.endRow][move.endCol]
-    attacker_piece = gs.board[move.startRow][move.startCol]
+    victim_piece = gs.board[move.endRow, move.endCol]
+    attacker_piece = gs.board[move.startRow, move.startCol]
 
     # Check if the piece is not an empty square
     if victim_piece != '--':
@@ -153,6 +155,8 @@ def capture_heuristic(gs, move):
         return victim_value - attacker_value
     else:
         return attacker_value - victim_value
+
+
 def scoreBoard(gs):
     if gs.checkMate:
         if gs.whiteToMove:
@@ -166,7 +170,7 @@ def scoreBoard(gs):
     score = 0
     for row in range(6):
         for col in range(5):
-            piece = gs.board[row][col]
+            piece = gs.board[row, col]
             if piece != "--":
                 piece_position_score = 0
                 if piece[1] != "K":
@@ -175,8 +179,6 @@ def scoreBoard(gs):
                     score += piece_score[piece[1]] + piece_position_score
                 if piece[0] == "b":
                     score -= piece_score[piece[1]] + piece_position_score
-                #print(piece_position_score)
+                # print(piece_position_score)
     return score
 
-def findRandomMove(validMoves):
-    return validMoves[random.randint(0, len(validMoves)-1)]

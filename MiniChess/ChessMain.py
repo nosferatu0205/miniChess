@@ -11,10 +11,11 @@ SQ_SIZE = 64
 MAX_FPS = 60
 IMAGES = {}
 p.init()
-COLORS = {'white': p.Color('white'), 'darkolivegreen3': p.Color('darkolivegreen3'), 'grey': p.Color('gray86')}
+COLORS = {'white': p.Color('white'), 'darkolivegreen3': p.Color('darkolivegreen3'), 'grey': p.Color('beige')}
 colors = [COLORS['white'], COLORS['darkolivegreen3']]
 font = p.font.SysFont('Arial', 15, bold=True)
 restart_button_rect = p.Rect(200, 410, 100, 40)
+
 
 
 def main():
@@ -36,6 +37,7 @@ def main():
     running = True
     sqSelected = []
     playerClicks = 0
+    message = ""
 
     while running:
         humanPlayer = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
@@ -90,15 +92,18 @@ def main():
                 gs.makeMove(aiMove)
                 moveMade = True
             else:
-                print("Player Won")
+                # print("Player Won")
+                message = "You Won :)"
 
         if moveMade:
             validMoves = gs.getValidMoves()
             if not validMoves:
-                print("Player lost")
+                # print("Player lost")
+                message = "You Lost :("
             moveMade = False
 
-        draw_game_state(screen, gs, validMoves, sqSelected)
+
+        draw_game_state(screen, gs, validMoves, sqSelected, message)
         # print("working2")
         p.display.flip()
 
@@ -109,11 +114,11 @@ def load_images():
         IMAGES[piece] = p.transform.scale(p.image.load(f"../images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
 
 
-def draw_game_state(screen, gs, validMoves, sqSelected):
+def draw_game_state(screen, gs, validMoves, sqSelected, message):
     draw_board(screen)
     draw_pieces(screen, gs.board)
     draw_buttons(screen)
-    draw_turn_indicator(screen, gs)
+    draw_turn_indicator(screen, gs, message)
 
 
 def draw_board(screen):
@@ -147,23 +152,33 @@ def draw_buttons(screen):
     screen.blit(restart_text, restart_text_rect)
 
 
-def draw_turn_indicator(screen, gs):
+def draw_turn_indicator(screen, gs, message):
     indicator_size = 40  # Size of the square indicator
     text_padding = 10  # Padding between text and the square indicator
     turn_rect = p.Rect(10, 410, indicator_size + text_padding + indicator_size, indicator_size)
 
-    # Draw "Turn: " text
-    font1 = p.font.Font(None, 23)  # Choose an appropriate font and size
+    font1 = p.font.SysFont('Arial', 18, bold=False)
     text_surface = font1.render("Turn: ", True, "black")
     text_rect = text_surface.get_rect(topleft=(turn_rect.left, turn_rect.centery - text_surface.get_height() // 2))
     screen.blit(text_surface, text_rect)
 
-    # Draw colored square based on the player's turn
     indicator_color = "white" if gs.whiteToMove else "black"
     indicator_rect = p.Rect(text_rect.right + text_padding, turn_rect.top, indicator_size, indicator_size)
     p.draw.rect(screen, indicator_color, indicator_rect)
-    p.draw.rect(screen, "gray", indicator_rect, 3)  # Draw a gray border around the square
-    p.display.update(turn_rect)  # Update the entire indicator area
+    p.draw.rect(screen, "red", indicator_rect, 1)
+
+    message_box_rect = p.Rect(10, turn_rect.bottom + 10, WIDTH - 20, 50)
+    p.draw.rect(screen, "black", message_box_rect)
+    p.draw.rect(screen, "red", message_box_rect, 1)
+    
+    # Draw the message text in the message box
+    if message:
+        font2 = p.font.SysFont('Arial', 16, bold=False)  # Choose an appropriate font and size for messages
+        message_surface = font2.render(message, True, "green")
+        message_rect = message_surface.get_rect(center=message_box_rect.center)
+        screen.blit(message_surface, message_rect)
+
+    p.display.update([turn_rect, message_box_rect])
 
 
 if __name__ == "__main__":
