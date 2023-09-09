@@ -72,7 +72,7 @@ def main():
                         else:
                             sqSelected = []
                             playerClicks = 0
-                            
+
                 if e.type == p.MOUSEBUTTONDOWN and restart_button_rect.collidepoint(e.pos):
                     gs = ChessEngine.GameState()
                     validMoves = gs.getValidMoves()
@@ -84,11 +84,18 @@ def main():
         # print("working")
         if not humanPlayer:
             aiMove = ai.findBestMove(gs, validMoves)
-            gs.makeMove(aiMove)
-            moveMade = True
+
+            if aiMove:
+                # print(aiMove.getChessNotation())
+                gs.makeMove(aiMove)
+                moveMade = True
+            else:
+                print("Player Won")
 
         if moveMade:
             validMoves = gs.getValidMoves()
+            if not validMoves:
+                print("Player lost")
             moveMade = False
 
         draw_game_state(screen, gs, validMoves, sqSelected)

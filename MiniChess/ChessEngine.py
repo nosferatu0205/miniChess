@@ -8,7 +8,7 @@ def is_valid_square(row, col):
     return np.logical_and(0 <= row, row < BOARD_ROWS) & np.logical_and(0 <= col, col < BOARD_COLS)
 
 
-class GameState():
+class GameState:
     def __init__(self):
         self.board = np.array([
             ["bR", "bN", "bB", "bQ", "bK"],
@@ -222,13 +222,14 @@ class Move():
         self.startCol = startSq[1]
         self.endRow = endSq[0]
         self.endCol = endSq[1]
-        self.pieceMoved = board[self.startRow][self.startCol]
-        self.pieceCaptured = board[self.endRow][self.endCol]
+        self.pieceMoved = board[self.startRow, self.startCol]
+        self.pieceCaptured = board[self.endRow, self.endCol]
         self.moveId = self.startRow * 1000 + self.startCol * 100 + self.endRow * 10 + self.endCol
         # pawn promotion
 
         self.is_pawn_promotion = (self.pieceMoved == "wp" and self.endRow == 0) or (
                 self.pieceMoved == "bp" and self.endRow == 5)
+
     def is_capture(self):
         """
         Determine whether this move is a capture.
