@@ -210,7 +210,7 @@ class GameState:
                     moves.append(Move((r, c), (destRow, destCol), self.board))
 
 
-class Move():
+class Move:
     ranksToRows = {"1": 5, "2": 4, "3": 3, "4": 2, "5": 1, "6": 0}
     rowsToRanks = {v: k for k, v in ranksToRows.items()}
 

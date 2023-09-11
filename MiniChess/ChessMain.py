@@ -16,8 +16,10 @@ colors = [COLORS['white'], COLORS['darkolivegreen3']]
 font = p.font.SysFont('Arial', 15, bold=True)
 restart_button_rect = p.Rect(200, 410, 100, 40)
 
+
 def get_valid_moves_for_selected_piece(selected_piece, valid_moves):
     return [move for move in valid_moves if (move.startRow, move.startCol) == selected_piece]
+
 
 def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))
@@ -56,46 +58,53 @@ def main():
                     location = p.mouse.get_pos()
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
+                    # print(col, row)
+                    if row < 6:
+                        if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'):
+                            selected_piece = (row, col)
+                            selected_piece_moves = get_valid_moves_for_selected_piece(selected_piece, validMoves)
 
-                    if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'):
-                        selected_piece = (row, col)
-                        selected_piece_moves = get_valid_moves_for_selected_piece(selected_piece, validMoves)
-
-                    if sqSelected == (row, col):
-                        sqSelected = []
-                        playerClicks = 0
-                        selected_piece = None
-                        selected_piece_moves = []
-                    else:
-                        sqSelected.append((row, col))
-                        playerClicks += 1
-
-                    if playerClicks == 2:
-                        if sqSelected[0][0] < 6 and sqSelected[1][0] < 6:
-                            move = ChessEngine.Move(sqSelected[0], sqSelected[1], gs.board)
-                            if move in validMoves:
-                                gs.makeMove(move)
-                                selected_piece = None
-                                selected_piece_moves = []
-                                moveMade = True
-                                sqSelected = []
-                                playerClicks = 0
-                                selected_piece = None
-
-                            else:
-                                playerClicks = 1
-                                sqSelected.remove(sqSelected[0])
-                                selected_piece = None
-                        else:
+                        if sqSelected == (row, col):
                             sqSelected = []
                             playerClicks = 0
                             selected_piece = None
+                            selected_piece_moves = []
+                        else:
+                            sqSelected.append((row, col))
+                            playerClicks += 1
+
+                        if playerClicks == 2:
+                            if sqSelected[0][0] < 6 and sqSelected[1][0] < 6:
+                                move = ChessEngine.Move(sqSelected[0], sqSelected[1], gs.board)
+                                if move in validMoves:
+                                    gs.makeMove(move)
+                                    selected_piece = None
+                                    selected_piece_moves = []
+                                    moveMade = True
+                                    sqSelected = []
+                                    playerClicks = 0
+                                    selected_piece = None
+                                    break
+
+                                else:
+                                    playerClicks = 1
+                                    sqSelected.remove(sqSelected[0])
+                                    selected_piece = None
+                            else:
+                                sqSelected = []
+                                playerClicks = 0
+                                selected_piece = None
+                    else:
+                        sqSelected = []
+                        playerClicks = 0
+                        selected_piece = None
 
                 if e.type == p.MOUSEBUTTONDOWN and restart_button_rect.collidepoint(e.pos):
                     gs = ChessEngine.GameState()
                     validMoves = gs.getValidMoves()
                     sqSelected = []
                     playerClicks = 0
+                    message = ''
                     running = True
                     moveMade = False
                     selected_piece = None
@@ -119,8 +128,6 @@ def main():
                 message = "You Lost :("
             moveMade = False
 
-
-
         draw_game_state(screen, gs, validMoves, sqSelected, message, selected_piece, selected_piece_moves)
         # print("working2")
         p.display.flip()
@@ -129,7 +136,7 @@ def main():
 def load_images():
     pieces = ["bR", "bN", "bB", "bQ", "bK", "bp", "wR", "wN", "wB", "wQ", "wK", "wp"]
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load(f"../images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[piece] = p.transform.scale(p.image.load(f"./images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
 
 
 def draw_game_state(screen, gs, validMoves, sqSelected, message, selected_piece=None, selected_piece_moves=[]):
@@ -140,11 +147,18 @@ def draw_game_state(screen, gs, validMoves, sqSelected, message, selected_piece=
 
     if selected_piece:
         r, c = selected_piece
-        p.draw.rect(screen, "red", p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE), 5)
+        draw_rect_alpha(screen, (173, 216, 230, 128), p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
     for move in selected_piece_moves:
         r, c = move.endRow, move.endCol
-        p.draw.rect(screen, "red", p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE), 5)
+        draw_rect_alpha(screen, (173, 216, 230, 128), p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+
+
+def draw_rect_alpha(surface, color, rect):
+    shape_surf = p.Surface(p.Rect(rect).size, p.SRCALPHA)
+    p.draw.rect(shape_surf, color, shape_surf.get_rect())
+    surface.blit(shape_surf, rect)
+
 
 def draw_board(screen):
     for r in range(DIMENSION_VERTICAL):
@@ -195,7 +209,7 @@ def draw_turn_indicator(screen, gs, message):
     message_box_rect = p.Rect(10, turn_rect.bottom + 10, WIDTH - 20, 50)
     p.draw.rect(screen, "black", message_box_rect)
     p.draw.rect(screen, "red", message_box_rect, 1)
-    
+
     # Draw the message text in the message box
     if message:
         font2 = p.font.SysFont('Arial', 16, bold=False)  # Choose an appropriate font and size for messages
