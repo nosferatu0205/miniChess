@@ -16,7 +16,8 @@ colors = [COLORS['white'], COLORS['darkolivegreen3']]
 font = p.font.SysFont('Arial', 15, bold=True)
 restart_button_rect = p.Rect(200, 410, 100, 40)
 
-
+def get_valid_moves_for_selected_piece(selected_piece, valid_moves):
+    return [move for move in valid_moves if (move.startRow, move.startCol) == selected_piece]
 
 def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))
@@ -39,6 +40,9 @@ def main():
     playerClicks = 0
     message = ""
 
+    selected_piece = None
+    selected_piece_moves = []
+
     while running:
         humanPlayer = (gs.whiteToMove and playerOne) or (not gs.whiteToMove and playerTwo)
         for e in p.event.get():
@@ -52,9 +56,16 @@ def main():
                     location = p.mouse.get_pos()
                     col = location[0] // SQ_SIZE
                     row = location[1] // SQ_SIZE
+
+                    if gs.board[row][col][0] == ('w' if gs.whiteToMove else 'b'):
+                        selected_piece = (row, col)
+                        selected_piece_moves = get_valid_moves_for_selected_piece(selected_piece, validMoves)
+
                     if sqSelected == (row, col):
                         sqSelected = []
                         playerClicks = 0
+                        selected_piece = None
+                        selected_piece_moves = []
                     else:
                         sqSelected.append((row, col))
                         playerClicks += 1
@@ -64,16 +75,21 @@ def main():
                             move = ChessEngine.Move(sqSelected[0], sqSelected[1], gs.board)
                             if move in validMoves:
                                 gs.makeMove(move)
+                                selected_piece = None
+                                selected_piece_moves = []
                                 moveMade = True
                                 sqSelected = []
                                 playerClicks = 0
+                                selected_piece = None
 
                             else:
                                 playerClicks = 1
                                 sqSelected.remove(sqSelected[0])
+                                selected_piece = None
                         else:
                             sqSelected = []
                             playerClicks = 0
+                            selected_piece = None
 
                 if e.type == p.MOUSEBUTTONDOWN and restart_button_rect.collidepoint(e.pos):
                     gs = ChessEngine.GameState()
@@ -82,6 +98,7 @@ def main():
                     playerClicks = 0
                     running = True
                     moveMade = False
+                    selected_piece = None
 
         # print("working")
         if not humanPlayer:
@@ -103,7 +120,8 @@ def main():
             moveMade = False
 
 
-        draw_game_state(screen, gs, validMoves, sqSelected, message)
+
+        draw_game_state(screen, gs, validMoves, sqSelected, message, selected_piece, selected_piece_moves)
         # print("working2")
         p.display.flip()
 
@@ -114,12 +132,19 @@ def load_images():
         IMAGES[piece] = p.transform.scale(p.image.load(f"../images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
 
 
-def draw_game_state(screen, gs, validMoves, sqSelected, message):
+def draw_game_state(screen, gs, validMoves, sqSelected, message, selected_piece=None, selected_piece_moves=[]):
     draw_board(screen)
     draw_pieces(screen, gs.board)
     draw_buttons(screen)
     draw_turn_indicator(screen, gs, message)
 
+    if selected_piece:
+        r, c = selected_piece
+        p.draw.rect(screen, "red", p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE), 5)
+
+    for move in selected_piece_moves:
+        r, c = move.endRow, move.endCol
+        p.draw.rect(screen, "red", p.Rect(c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE), 5)
 
 def draw_board(screen):
     for r in range(DIMENSION_VERTICAL):
